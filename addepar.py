@@ -1,23 +1,22 @@
-from ctypes import sizeof
-import requests 
-
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from seleniumwire import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service as ChromeService
 
-url = "https://addepar.com/careers"
-# url = "https://addepar.com/careers#engineering"
+opts = Options()
+# so that browser instance doesn't pop up
+opts.add_argument("--headless")
 
-print("execute")
-response = requests.get(url)
-soup = BeautifulSoup(response.text, "lxml")
+driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
+url = "https://addepar.com/careers#engineering"
+driver.get(url)
+content = driver.page_source
+soup = BeautifulSoup(content, "lxml")
+driver.quit()
 
-# job_titles = soup.find_all("p", class_ ="f4")
-# job_titles = soup.find_all("a")
-# job_titles = soup.find_all("a", class_ ="engineering")
-# job_titles = soup.find_all("p")
-# job_titles = soup.select("p.f4")
-# print("size: " , sizeof(job_titles))
-# for title in job_titles:
-#     print (str(title))
-print(soup)
-
-
+jobs = []
+titles = soup.select("p.f4")
+for title in titles:
+    jobs.append(title.contents[0])

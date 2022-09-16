@@ -43,3 +43,6 @@ while len(q) > 0:
 print("found jobs: ", len(jobs))
 for job in jobs:
     print(job)
+    
+    
+# return the set of jobs found
