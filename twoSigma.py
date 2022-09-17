@@ -38,6 +38,8 @@ while len(q) > 0:
         
         if urlLink not in urlSet:
             q.insert(0, urlLink)
+            urlSet.add(curLink)
+            
     
 
 print("found jobs: ", len(jobs))
