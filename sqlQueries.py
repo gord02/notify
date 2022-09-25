@@ -34,8 +34,30 @@ def execute_query(connection, query):
     except Error as e:
         print(f"The error '{e}' occurred")
 
-       
-connection = create_connection("localhost", "root", "", "checkon")   
+def query_compaines(connection, query):
+    cursor = connection.cursor()
+    result = None
+    
+    try:
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
+    except Error as e:
+        print(f"The error '{e}' occurred")
+    
+def update_company_status(file_name):
+    connection = create_connection("localhost", "root", "", "checkon") 
+    
+    update_company = f"""
+        UPDATE
+        companies
+        SET
+        found = 1
+        where fileName = {file_name}
+      """
+    execute_query(connection, update_company)
+   
+  
 db_query = "CREATE DATABASE checkon"
 table_create = """
 CREATE TABLE IF NOT EXISTS companies (
@@ -45,7 +67,7 @@ CREATE TABLE IF NOT EXISTS companies (
 )
 """
 add_companies = """
-INSERT INTO companies(company, fileName, found)
+    INSERT INTO companies(company, fileName, found)
     VALUES 
     ("Snapchat", "snap.py", 0),
     ("Addepar", "addepar.py", 0),
@@ -53,5 +75,15 @@ INSERT INTO companies(company, fileName, found)
     ("twoSigma", "twoSigma.py", 0),
     ("Yelp", "yelp.py", 0);
 """
-# create_database(connection, db_query)
-execute_query(connection, add_companies)
+
+def get_compaines(): 
+    connection = create_connection("localhost", "root", "", "checkon") 
+    
+    get_query = "SELECT * FROM companies WHERE found = 0"
+    # return list of tuples
+    return query_compaines(connection, get_query)
+    # for row in sql_table_data:
+    #     print(row)
+    #     print("type: ", type(row))
+
+
