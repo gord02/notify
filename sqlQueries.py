@@ -34,7 +34,7 @@ def execute_query(connection, query):
     except Error as e:
         print(f"The error '{e}' occurred")
 
-def query_compaines(connection, query):
+def query_companies(connection, query):
     cursor = connection.cursor()
     result = None
     
@@ -76,14 +76,13 @@ add_companies = """
     ("Yelp", "yelp.py", 0);
 """
 
-def get_compaines(): 
+def get_companies(): 
     connection = create_connection("localhost", "root", "", "checkon") 
     
     get_query = "SELECT * FROM companies WHERE found = 0"
     # return list of tuples
-    return query_compaines(connection, get_query)
-    # for row in sql_table_data:
-    #     print(row)
-    #     print("type: ", type(row))
+    return query_companies(connection, get_query)
+
+    
 
 
