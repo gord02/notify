@@ -7,7 +7,6 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 
 from wordScan import wordScan
 
-
 def get_data():   
     opts = Options()
     # so that browser instance doesn't pop up
@@ -19,12 +18,18 @@ def get_data():
     content = driver.page_source
     soup = BeautifulSoup(content, "lxml")
     driver.quit()
-    # print(soup)
+
     jobs = []
     titles = soup.select("th a")
+    
+    # abstract below logic !!!
     for title in titles:
         job_name = title.contents[0]
         if wordScan(job_name):
+            
+            # update company in database to found
+            
+            
             jobs.append(job_name)
         # print(title['href'])
     # for job in jobs:
