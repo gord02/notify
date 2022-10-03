@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Update</title>
+        <meta name="description" content="Update">
+        <meta name="keywords" content="Update">
+    </head>
+    <body>
+        <h1> Job Listing Updates </h1>
+        
+        <ul>
+            {% for items in data %}
+                <h1> {{items[0]}}: </h1>
+                {% for job in items %}
+                    {%if loop.index0 >= 1 %}
+                        <li>{{ job }}</li>
+                    {% endif %}
+                {% endfor %}
+               
+            {% endfor %}
+        </ul>
+    </body>
+</html>
