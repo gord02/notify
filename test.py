@@ -54,3 +54,8 @@ driver.quit()
 # r = session.get('https://python.org/')
 # print("r: type", type(r))
 # print(r.html)
+
+from wordScan import wordScan
+print(wordScan("Internal squad"))
+print(wordScan("Backend Software Engineer"))
+print(wordScan("Internal Engineer"))
