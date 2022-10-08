@@ -7,6 +7,8 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 
 import time
 
+from logic import process
+
 def get_data():  
     start_time = time.time()
     opts = Options()
@@ -21,7 +23,7 @@ def get_data():
     soup = BeautifulSoup(content, "lxml")
     driver.quit()
 
-    jobs = set()
+    titles = set()
 
     # Page has pagination
     usedLinks = set()
@@ -30,7 +32,6 @@ def get_data():
     firstLink = soup.select("ul.pagination li a")[1]['href']
 
     q.append(firstLink)
-    hits = 0
     while len(q) > 0:
         link = q.pop()
         usedLinks.add(link)
@@ -43,7 +44,7 @@ def get_data():
         
         jobTitles =  soup.select("div.job-title span")
         for jobT in jobTitles:
-            jobs.add(jobT.contents[0])
+            titles.add(jobT.contents[0])
         
         links = soup.select("ul.pagination li a")
         for newLink in links:
@@ -53,10 +54,13 @@ def get_data():
                     # prevents repeated addition of the same url to the q
                     usedLinks.add(urlLink)
                     
-        
+    jobs = process.process_job_titles(titles)
+    if len(jobs) > 0:
+        # update company in database to found
+        pass  
+         
+                         
     print("--- %s seconds ---" % (time.time() - start_time))
     print("minutes: ", (time.time() - start_time)/60)
-        
-    # cant get the link to job
-    # for job in jobs: 
-    #     print(job)
+    
+  

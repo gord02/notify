@@ -5,7 +5,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 
-from wordScan import wordScan
+import sys
+# allows for getting files up a level when trying to run this file directly
+sys.path.insert(0,'..')
+from logic import process
 
 def get_data():   
     opts = Options()
@@ -19,20 +22,16 @@ def get_data():
     soup = BeautifulSoup(content, "lxml")
     driver.quit()
 
-    jobs = []
-    titles = soup.select("th a")
-    
-    # abstract below logic !!!
-    for title in titles:
-        job_name = title.contents[0]
-        if wordScan(job_name):
-            
-            # update company in database to found
-            
-            
-            jobs.append(job_name)
-        # print(title['href'])
-    # for job in jobs:
-    #     print(job)
+    titles = set()
+    elements = soup.select("th a")
+    for element in elements:
+        titles.add(element.contents[0])
+    # for title in titles:
+    #     print(title)
+    jobs = process.process_job_titles(titles)
+    if len(jobs) > 0:
+        # update company in database to found
+        pass
+        
         
 get_data()

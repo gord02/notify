@@ -1,5 +1,5 @@
 import requests 
-
+from logic import process
 from bs4 import BeautifulSoup
 
 def get_data():  
@@ -11,7 +11,7 @@ def get_data():
 
     # set for urls and jobs
     urlSet = set()
-    jobs = set()
+    titles = set()
 
     # Create queue to store urls
     q = []
@@ -27,10 +27,10 @@ def get_data():
         response = requests.get(curLink)
         soup = BeautifulSoup(response.text, "lxml")
         
-        job_titles = soup.select("a.mobileShow")    
+        elements = soup.select("a.mobileShow")    
 
-        for title in job_titles:
-            jobs.add(title.contents[0])
+        for element in elements:
+            titles.add(element.contents[0])
         
         paginationLinks = soup.select("a.paginationLink")
         
@@ -41,11 +41,11 @@ def get_data():
                 q.insert(0, urlLink)
                 urlSet.add(curLink)
                 
+    # print("found jobs: ", len(jobs))
+    # for job in jobs:
+    #     print(job)
         
-
-    print("found jobs: ", len(jobs))
-    for job in jobs:
-        print(job)
-        
-        
-    # return the set of jobs found
+    jobs = process.process_job_titles(titles)
+    if len(jobs) > 0:
+        # update company in database to found
+        pass

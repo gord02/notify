@@ -5,7 +5,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 
-from wordScan import wordScan
+from logic import process
 
 def get_data():  
     opts = Options()
@@ -19,11 +19,16 @@ def get_data():
     soup = BeautifulSoup(content, "lxml")
     driver.quit()
 
-    # jobs contains the jobs I am interested, intern roles
-    jobs = []
-    titles = soup.select("p.f4")
-    for title in titles:
-        job_name = title.contents[0]
-        if wordScan(job_name):
-            jobs.append(job_name)
-    return jobs
+    titles = set()
+    
+    elements = soup.select("p.f4")
+    for element in elements:
+        titles.add(element.contents[0])
+    
+    jobs = process.process_job_titles(titles)
+    if len(jobs) > 0:
+        # update company in database to found
+        
+        pass
+    
+    

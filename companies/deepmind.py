@@ -5,6 +5,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 
+from logic import process
+
 opts = Options()
 # so that browser instance doesn't pop up
 opts.add_argument("--headless")
@@ -15,10 +17,12 @@ driver.get(url)
 content = driver.page_source
 soup = BeautifulSoup(content, "lxml")
 driver.quit()
-jobs = set()
+titles = set()
 elements = soup.select("tr.jobs-table-row")
 for element in elements:
     jobs.add(element.contents[0].contents[0])
 
-for title in jobs:
-    print(title)
+jobs = process.process_job_titles(titles)
+if len(jobs) > 0:
+    # update company in database to found
+    pass
