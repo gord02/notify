@@ -6,8 +6,10 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 
 from logic import process
+from logic import sqlQueries
 
-def get_data():  
+def get_data(): 
+    company =  "Addepar"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
@@ -28,7 +30,8 @@ def get_data():
     jobs = process.process_job_titles(titles)
     if len(jobs) > 0:
         # update company in database to found
+        sqlQueries.update_company(company)
         
-        pass
+    return jobs
     
     

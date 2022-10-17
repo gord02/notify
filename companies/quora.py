@@ -16,11 +16,12 @@ def get_data():
     content = driver.page_source
     soup = BeautifulSoup(content, "lxml")
     driver.quit()
-    print(content)
+    # print(content)
 
     jobs = []
     # titles = soup.select("td div")
-    title = soup.select("td div")
-    print(title)
+    # title = soup.select("td div")
+    # print(title)
     # for title in titles:
         # jobs.append(title.contents[0])
+    return jobs

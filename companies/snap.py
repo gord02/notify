@@ -9,8 +9,10 @@ import sys
 # allows for getting files up a level when trying to run this file directly
 sys.path.insert(0,'..')
 from logic import process
+from logic import sqlQueries
 
 def get_data():   
+    company = "Snap"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
@@ -31,7 +33,8 @@ def get_data():
     jobs = process.process_job_titles(titles)
     if len(jobs) > 0:
         # update company in database to found
-        pass
+        # update company in database to found
+        sqlQueries.update_company(company)
         
-        
+    return jobs
 get_data()

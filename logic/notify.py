@@ -12,8 +12,9 @@ password = os.getenv('PASSWORD')
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 sender = os.getenv('SENDER')
 
-def send_email():
-    data = [["Reddit", "Astrophysicist", "Redditor"], ["Google", "Googler", "Programmer"]]
+def send_email(data):
+    print("data: ", data)
+    # data = [["Reddit", "Astrophysicist", "Redditor"], ["Google", "Googler", "Programmer"]]
 
     send_grid = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)
 
@@ -40,4 +41,3 @@ def send_email():
     # Send an HTTP POST request to /mail/send
     send_grid.client.mail.send.post(request_body=mail_json)
     
-# send_email()

@@ -84,5 +84,16 @@ def get_companies():
     return query_companies(connection, get_query)
 
     
+def update_company(company):
+    connection = create_connection("localhost", "root", "", "checkon") 
+    update = f"""
+    UPDATE
+    companies
+    SET
+    found = 1
+    WHERE
+    company = '{company}'
+    """
+    execute_query(connection, update)
 
 

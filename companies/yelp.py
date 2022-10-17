@@ -8,8 +8,11 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 import time
 
 from logic import process
+from logic import sqlQueries
 
 def get_data():  
+    company = "Yelp"
+    
     start_time = time.time()
     opts = Options()
     # so that browser instance doesn't pop up
@@ -57,10 +60,10 @@ def get_data():
     jobs = process.process_job_titles(titles)
     if len(jobs) > 0:
         # update company in database to found
-        pass  
-         
-                         
+        sqlQueries.update_company(company)
+                               
     print("--- %s seconds ---" % (time.time() - start_time))
     print("minutes: ", (time.time() - start_time)/60)
     
-  
+    return jobs
+    
