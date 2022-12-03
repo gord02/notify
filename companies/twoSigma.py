@@ -70,7 +70,7 @@ def get_data():
         
         
         print("first link: ", firstLink)
-        print("minutes: ", (time.time() - start_time)/60)
+        # print("minutes: ", (time.time() - start_time)/60)
                 
         # print("found jobs: ", len(jobs))
         # for job in jobs:

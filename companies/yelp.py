@@ -62,8 +62,8 @@ def get_data():
         # update company in database to found
         sqlQueries.update_company(company)
                                
-    print("--- %s seconds ---" % (time.time() - start_time))
-    print("minutes: ", (time.time() - start_time)/60)
+    # print("--- %s seconds ---" % (time.time() - start_time))
+    # print("minutes: ", (time.time() - start_time)/60)
     
     return jobs
     
