@@ -5,22 +5,37 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 
-opts = Options()
-# so that browser instance doesn't pop up
-opts.add_argument("--headless")
+from logic import process
+from logic import notify
+from logic import sqlQueries
 
-driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-url = "https://careers.bloomberg.com/job/search?el=Internships"
-driver.get(url)
-content = driver.page_source
-soup = BeautifulSoup(content, "lxml")
-driver.quit()
-jobs = set()
-print(soup)
-elements = soup.select("div.kOaGIY")
-for element in elements:
-    print(element)
-    # jobs.add(element.contents)
+def get_data():
+    jobs = []
+    company = "Reddit"
+    
+    opts = Options()
+    # so that browser instance doesn't pop up
+    opts.add_argument("--headless")
 
-for title in jobs:
-    print(title)
+    try:
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
+        url = "https://careers.bloomberg.com/job/search?el=Internships"
+        driver.get(url)
+        content = driver.page_source
+        soup = BeautifulSoup(content, "lxml")
+        driver.quit()
+        # print(soup)
+        elements = soup.select("a.js-display-job")
+
+        for element in elements:
+            jobs.append(element.contents[0])
+            
+        jobs = process.process_job_titles(jobs)
+        
+        if len(jobs) > 0:
+            # update company in database to found
+            sqlQueries.update_company(company)
+    except:
+        # send email about scrapping error
+        notify.parsing_error(company)
+        return jobs

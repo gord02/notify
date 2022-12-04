@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 
 from logic import process
+from logic import notify
 from logic import sqlQueries
 
 def get_data(): 
@@ -13,24 +14,31 @@ def get_data():
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
+    jobs = []
 
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-    url = "https://addepar.com/careers#engineering"
-    driver.get(url)
-    content = driver.page_source
-    soup = BeautifulSoup(content, "lxml")
-    driver.quit()
+    try:
+        url = "https://addepar.com/careers#engineering"
+        driver.get(url)
+        content = driver.page_source
+        soup = BeautifulSoup(content, "lxml")
+        driver.quit()
 
-    titles = set()
-    
-    elements = soup.select("p.f4")
-    for element in elements:
-        titles.add(element.contents[0])
-    
-    jobs = process.process_job_titles(titles)
-    if len(jobs) > 0:
-        # update company in database to found
-        sqlQueries.update_company(company)
+        titles = set()
+        
+        elements = soup.select("p.f4")
+        for element in elements:
+            titles.add(element.contents[0])
+        
+        jobs = process.process_job_titles(titles)
+        if len(jobs) > 0:
+            # update company in database to found
+            sqlQueries.update_company(company)
+
+    except:
+        # send email about scrapping error
+        notify.parsing_error(company)
+        return jobs
         
     return jobs
     

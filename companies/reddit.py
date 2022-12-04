@@ -5,20 +5,36 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 
-opts = Options()
-# so that browser instance doesn't pop up
-opts.add_argument("--headless")
+from logic import process
+from logic import notify
+from logic import sqlQueries
 
-driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-url = "https://www.redditinc.com/careers/#job-info"
-driver.get(url)
-content = driver.page_source
-soup = BeautifulSoup(content, "lxml")
-driver.quit()
-jobs = set()
-elements = soup.select("div.job a div.job-title")
-for element in elements:
-    jobs.add(elements[0].contents[0])
+def get_data():
+    company = "Reddit"
+    opts = Options()
+    # so that browser instance doesn't pop up
+    opts.add_argument("--headless")
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
 
-for title in jobs:
-    print(title)
+    url = "https://www.redditinc.com/careers/#job-info"
+    jobs = []
+
+    try:
+        driver.get(url)
+        content = driver.page_source
+        soup = BeautifulSoup(content, "lxml")
+        driver.quit()
+        elements = soup.select("div.job a div.job-title")
+        for element in elements:
+            # print(element.contents[0])
+            jobs.append(element.contents[0])
+        jobs = process.process_job_titles(jobs)
+        
+        if len(jobs) > 0:
+            # update company in database to found
+            sqlQueries.update_company(company)
+    except:
+          # send email about scrapping error
+        notify.parsing_error(company)
+        return jobs
+# get_data() 

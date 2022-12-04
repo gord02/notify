@@ -8,11 +8,14 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 import time
 import sys
 # allows for getting files up a level when trying to run this file directly
-sys.path.insert(0,'..')
+sys.path.insert(0,'..') #this works relative to where to program was run from 
 
 from logic import process
+from logic import notify
+from logic import sqlQueries
 
 def get_data():  
+    company =  "twoSigma"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
@@ -20,14 +23,14 @@ def get_data():
     start_time = time.time()
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
     url = "https://careers.twosigma.com/careers/SearchJobs/Intern?2047=%5B9813555%5D&2047_format=1532&listFilterMode=1"
-    
+    jobs = []
     try:
         driver.get(url)
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
         driver.quit()
 
-        print(soup)
+        # print(soup)
         # firstLink = soup.select_one("a.paginationLink").get("href")
         firstLink = soup.select_one("a.paginationLink")
     
@@ -48,7 +51,7 @@ def get_data():
             urlSet.add(curLink)
             
             driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-            print("p: ", curLink)
+            # print("p: ", curLink)
             driver.get(curLink)
             content = driver.page_source
             soup = BeautifulSoup(content, "lxml")
@@ -69,7 +72,7 @@ def get_data():
                     urlSet.add(curLink)
         
         
-        print("first link: ", firstLink)
+        # print("first link: ", firstLink)
         # print("minutes: ", (time.time() - start_time)/60)
                 
         # print("found jobs: ", len(jobs))
@@ -79,10 +82,14 @@ def get_data():
         jobs = process.process_job_titles(titles)
         if len(jobs) > 0:
             # update company in database to found
+            sqlQueries.update_company(company)
             pass
         
         return jobs
     except:
+        # send email about scrapping error
+        notify.parsing_error(company)
         return jobs
         
-get_data()
+# get_data()
+

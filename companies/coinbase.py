@@ -5,11 +5,18 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 
+import undetected_chromedriver as uc
+
+# options = webdriver.ChromeOptions() 
+# driver.get('https://bet365.com')
+
 opts = Options()
 # so that browser instance doesn't pop up
 opts.add_argument("--headless")
+opts.add_argument("start-maximized")
 
-driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
+driver = uc.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
+# driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
 url = "https://www.coinbase.com/careers/positions?department=Engineering"
 driver.get(url)
 content = driver.page_source
