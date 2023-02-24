@@ -2,4 +2,6 @@
 __pycache__
 geckodriver.log
 updateEnv/
+companies/broken/
+
 

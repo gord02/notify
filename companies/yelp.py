@@ -9,6 +9,8 @@ from logic import process
 from logic import notify
 from logic import sqlQueries
 
+import time
+
 def get_data():  
     company = "Yelp"
     

@@ -47,7 +47,6 @@ def get_data():
             if len(jobs) > 0:
                 # update company in database to found
                 sqlQueries.update_company(company)
-                pass
             
             return jobs
     except:

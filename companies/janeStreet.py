@@ -9,37 +9,37 @@ from logic import process
 from logic import notify
 from logic import sqlQueries
 
-def get_data():
-    company = "Reddit"
+def get_data(): 
+    company =  "Jane Street"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-
-    url = "https://www.redditinc.com/careers/#job-info"
     jobs = []
 
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
     try:
+        url = "https://www.janestreet.com/join-jane-street/open-roles/?type=internship&location=all-locations"
         driver.get(url)
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
         driver.quit()
-        elements = soup.select("div.job a div.job-title")
-
+        
+        elements = soup.select("div.position p")
         for element in elements:
-            if len(element.contents) != 0:
-                # print(element.contents[0])
-                jobs.append(element.contents[0])
-
+            # positions dont have intern in them but they are intern roles
+            jobs.append(element.contents[0]+ " Intern")
+        
         jobs = process.process_job_titles(jobs)
-
         if len(jobs) > 0:
             # update company in database to found
             sqlQueries.update_company(company)
+
+    except:
+        # send email about scrapping error
+        notify.parsing_error(company)
         return jobs
-    except Exception as e:
-        print(f"Exception when parsing {company}: ", e)
-          # send email about scrapping error
-        # notify.parsing_error(company)
-        return jobs
-get_data() 
+        
+    return jobs
+    
+    
+get_data()

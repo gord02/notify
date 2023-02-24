@@ -42,7 +42,7 @@ def get_data():
                 
         pageNum = "&page="
         i = range[0]
-        print(range[0], range[1])
+        # print(range[0], range[1])
         
         # false negative of no reuslts 
         while i<= range[1]:

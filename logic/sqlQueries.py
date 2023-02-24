@@ -97,3 +97,22 @@ def update_company(company):
     execute_query(connection, update)
 
 
+def add_company(company, fileName):
+    connection = create_connection("localhost", "root", "", "checkon") 
+    add=f""" INSERT INTO companies(company, fileName, found)
+        VALUES ('{company}', '{fileName}', 0);
+    """
+    execute_query(connection, add)
+    
+# add_company("Zoom","zoom.py")
+
+def reset_company_found():
+    connection = create_connection("localhost", "root", "", "checkon") 
+    
+    update=""" UPDATE companies
+        SET found = 0
+        WHERE found = 1;
+    """
+    execute_query(connection, update)
+    
+# reset_company_found()

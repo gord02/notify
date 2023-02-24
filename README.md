@@ -16,3 +16,5 @@ I have decided to use webdriver manager so I do not have to specify the path to 
 
 Selenium Options is used to create a headless browser, meaning tab for Google Chrome won't open
 
+If installing for the first time. Create a virtual environment using requirements.txt
+

@@ -11,8 +11,7 @@ from logic import sqlQueries
 
 def get_data():
     jobs = []
-    company = "Reddit"
-    
+    company = "Bloomberg"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
@@ -29,13 +28,18 @@ def get_data():
 
         for element in elements:
             jobs.append(element.contents[0])
-            
+       
         jobs = process.process_job_titles(jobs)
+        # print("bloom jobs: ", jobs)
         
         if len(jobs) > 0:
             # update company in database to found
             sqlQueries.update_company(company)
-    except:
-        # send email about scrapping error
-        notify.parsing_error(company)
         return jobs
+    except Exception as e:
+        print(f"Error with parsing {company}: ", e)
+        # send email about scrapping error
+        # notify.parsing_error(company)
+        return jobs
+    
+# get_data()

@@ -30,11 +30,10 @@ def get_data():
         soup = BeautifulSoup(content, "lxml")
         driver.quit()
 
-        # print(soup)
-        # firstLink = soup.select_one("a.paginationLink").get("href")
-        firstLink = soup.select_one("a.paginationLink")
-    
-        # return
+        page = soup.select_one("a.paginationLink")
+        # print("first linK attrs: ", firstLink.attrs)
+        firstLink= page.attrs['href']
+
         # set for urls and jobs
         urlSet = set()
         titles = set()
@@ -45,24 +44,27 @@ def get_data():
         if(firstLink):
             q.append(firstLink)
             
+            
         # For each page, first push current to set, get all links for other pages, and if not in set, push to queue
         while len(q) > 0:
             curLink = q.pop()
             urlSet.add(curLink)
             
             driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-            # print("p: ", curLink)
+
             driver.get(curLink)
             content = driver.page_source
             soup = BeautifulSoup(content, "lxml")
             driver.quit()
             
             elements = soup.select("a.mobileShow")    
+            # print("elements: ", elements)
 
             for element in elements:
                 titles.add(element.contents[0])
             
             paginationLinks = soup.select("a.paginationLink")
+            # print("paginationLinks: ", paginationLinks)
             
             for link in paginationLinks:
                 urlLink = link.get("href")
@@ -72,24 +74,20 @@ def get_data():
                     urlSet.add(curLink)
         
         
-        # print("first link: ", firstLink)
-        # print("minutes: ", (time.time() - start_time)/60)
-                
-        # print("found jobs: ", len(jobs))
-        # for job in jobs:
-        #     print(job)
-            
+        print("titles: ", titles)
         jobs = process.process_job_titles(titles)
+
         if len(jobs) > 0:
             # update company in database to found
             sqlQueries.update_company(company)
             pass
-        
+
         return jobs
-    except:
+    except Exception as e:
         # send email about scrapping error
-        notify.parsing_error(company)
+        print("error: ", e)
+        # notify.parsing_error(company)
         return jobs
         
-# get_data()
+get_data()
 
