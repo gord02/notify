@@ -17,27 +17,27 @@ def get_data():
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
-
+    jobs = []
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
         url = "https://www.deepmind.com/careers/jobs?teams=Engineering&sort=newest_first"
         driver.get(url)
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
-        # print(soup)
         driver.quit()
-        titles = []
         elements = soup.select("tr.jobs-table-row td")
         for element in elements:
-            jobs.add(element.contents[0])
+            jobs.append(element.contents[0])
 
-        jobs = process.process_job_titles(titles)
+        jobs = process.process_job_titles(jobs)
         if len(jobs) > 0:
             # update company in database to found
             sqlQueries.update_company(company)
         return jobs
-    except:
+    except Exception as e:
+        print(f"Exception raised when scrapping {company} ", e)
         # send email about scrapping error
-        notify.parsing_error(company)
+        # notify.parsing_error(company)
         return jobs
         
+get_data()

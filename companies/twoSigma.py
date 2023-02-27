@@ -74,7 +74,7 @@ def get_data():
                     urlSet.add(curLink)
         
         
-        print("titles: ", titles)
+        # print("titles: ", titles)
         jobs = process.process_job_titles(titles)
 
         if len(jobs) > 0:
@@ -89,5 +89,5 @@ def get_data():
         # notify.parsing_error(company)
         return jobs
         
-get_data()
+# get_data()
 

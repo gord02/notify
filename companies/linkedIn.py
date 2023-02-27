@@ -18,18 +18,19 @@ def get_data():
 
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
     # try:
-    url = "https://www.janestreet.com/join-jane-street/open-roles/?type=internship&location=all-locations"
+    url = "https://www.linkedin.com/jobs/search/?currentJobId=3363564898&f_C=1337%2C39939%2C2587638%2C9202023&geoId=92000000&originToLandingJobPostings=3489403427%2C3496919775%2C3448033554%2C3396273093%2C3480292950%2C3395173747%2C3476414384%2C3474361857%2C3479858849&start=25"
     driver.get(url)
     content = driver.page_source
     soup = BeautifulSoup(content, "lxml")
     driver.quit()
-    print(soup)
-    elements = soup.select("div.position p")
-    # for element in elements:
-        # positions dont have intern in them but they are intern roles
-        # jobs.append(element.contents[0]+ " Intern")
+    elements = soup.select("a span")
+
+    # have to parse through all linkedin pages !
+    for element in elements:
+        print(element.contents[0].strip())
+  
     
-    # jobs = process.process_job_titles(jobs)
+    jobs = process.process_job_titles(jobs)
     # if len(jobs) > 0:
     #     # update company in database to found
     #     sqlQueries.update_company(company)

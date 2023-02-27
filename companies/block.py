@@ -23,7 +23,7 @@ from logic import sqlQueries
 
 def get_data():  
     try:
-        company =  "Meta"
+        company =  "Block"
         opts = Options()
         # so that browser instance doesn't pop up
         opts.add_argument("--headless")
@@ -44,8 +44,10 @@ def get_data():
             jobs.append(x.contents[0])
 
             jobs = process.process_job_titles(jobs)
+            print(jobs)
             if len(jobs) > 0:
                 # update company in database to found
+                print("here")
                 sqlQueries.update_company(company)
             
             return jobs
@@ -55,4 +57,4 @@ def get_data():
         return jobs
         
 
-get_data()
+# get_data()
