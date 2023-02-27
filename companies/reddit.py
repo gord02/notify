@@ -37,9 +37,12 @@ def get_data():
             # update company in database to found
             sqlQueries.update_company(company)
         return jobs
+    
     except Exception as e:
-        print(f"Exception when parsing {company}: ", e)
-          # send email about scrapping error
-        # notify.parsing_error(company)
+        # send email about scrapping error
+        error=f"Exception parsing {company} "+ e
+        print(error)
+        notify.parsing_error(error)
         return jobs
-get_data() 
+    
+# get_data() 

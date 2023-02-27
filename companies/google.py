@@ -60,11 +60,14 @@ def get_data():
         if len(jobs) > 0:
             # update company in database to found
             sqlQueries.update_company(company)
-    except:
+    
+    except Exception as e:
         # send email about scrapping error
-        notify.parsing_error(company)
+        error=f"Exception parsing {company} "+ e
+        print(error)
+        notify.parsing_error(error)
         return jobs
         
-    return jobs
+
     
 # get_data()

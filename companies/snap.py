@@ -10,6 +10,7 @@ import sys
 sys.path.insert(0,'..')
 from logic import process
 from logic import sqlQueries
+from logic import notify
 
 def get_data():   
     company = "Snap"
@@ -17,24 +18,33 @@ def get_data():
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
 
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-    url = "https://www.snap.com/en-US/jobs?lang=en-US"
-    driver.get(url)
-    content = driver.page_source
-    soup = BeautifulSoup(content, "lxml")
-    driver.quit()
+    try:
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
+        url = "https://www.snap.com/en-US/jobs?lang=en-US"
+        driver.get(url)
+        content = driver.page_source
+        soup = BeautifulSoup(content, "lxml")
+        driver.quit()
 
-    titles = set()
-    elements = soup.select("th a")
-    for element in elements:
-        titles.add(element.contents[0])
-    # for title in titles:
-    #     print(title)
-    jobs = process.process_job_titles(titles)
-    if len(jobs) > 0:
-        # update company in database to found
-        # update company in database to found
-        sqlQueries.update_company(company)
-        
-    return jobs
-get_data()
+        titles = set()
+        elements = soup.select("th a")
+        for element in elements:
+            titles.add(element.contents[0])
+        # for title in titles:
+        #     print(title)
+        jobs = process.process_job_titles(titles)
+        if len(jobs) > 0:
+            # update company in database to found
+            # update company in database to found
+            sqlQueries.update_company(company)
+            
+        return jobs
+
+    except Exception as e:
+        # send email about scrapping error
+        error=f"Exception parsing {company} "+ e
+        print(error)
+        notify.parsing_error(error)
+        return jobs
+    
+# get_data()
