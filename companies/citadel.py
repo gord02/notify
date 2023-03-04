@@ -5,41 +5,38 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 
-import sys
-# allows for getting files up a level when trying to run this file directly
-sys.path.insert(0,'..')
 from logic import process
-from logic import sqlQueries
 from logic import notify
+from logic import sqlQueries
 
-def get_data():   
-    company = "Snapchat"
+def get_data():
+    company = "Citadel"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
+
+    url = "https://www.citadel.com/careers/open-opportunities/students/internships/"
+    jobs = []
 
     try:
-        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://www.snap.com/en-US/jobs?lang=en-US"
         driver.get(url)
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
         driver.quit()
+        elements = soup.select("span > a")
 
-        titles = set()
-        elements = soup.select("th a")
         for element in elements:
-            titles.add(element.contents[0])
-        # for title in titles:
-        #     print(title)
-        jobs = process.process_job_titles(titles)
+            # print(element.contents[0])
+            jobs.append(element.contents[0])
+
+        jobs = process.process_job_titles(jobs)
+
         if len(jobs) > 0:
             # update company in database to found
-            # update company in database to found
             sqlQueries.update_company(company)
-            
         return jobs
-
+    
     except Exception as e:
         # send email about scrapping error
         error=f"Exception parsing {company} "+ e
@@ -47,4 +44,4 @@ def get_data():
         notify.parsing_error(error)
         return jobs
     
-# get_data()
+get_data() 

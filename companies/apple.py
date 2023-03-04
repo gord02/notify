@@ -26,7 +26,7 @@ def get_data():
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
         
-        url = "https://jobs.apple.com/en-us/search?team=Internships-STDNT-INTRN"
+        url = "https://jobs.apple.com/en-us/search?location=united-states-USA+canada-CANC&team=internships-STDNT-INTRN"
         driver.get(url)
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
