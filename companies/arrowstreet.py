@@ -18,7 +18,7 @@ from logic import notify
 from logic import sqlQueries
 
 def get_data(): 
-    company =  "Netflix"
+    company =  "Arrowstreet Capital"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
@@ -26,26 +26,25 @@ def get_data():
 
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://jobs.netflix.com/search?team=Data%20Science%20and%20Engineering"
-
+        url = "https://arrowstreetcapital.wd5.myworkdayjobs.com/en-US/Arrowstreet?q=intern&ref=levels.fyi"
         driver.get(url)
+
         # wait for the specifc component with this class name to rendered before scraping
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "e1rpdjew0")))
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "css-19uc56f")))
 
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
-
         driver.quit()
-        elements = soup.select("h4.e1rpdjew0")
+        elements = soup.select("h3 > a")
         for element in elements:
-            jobs.append(element.contents[0])
+            print(element.contents[0])
 
         jobs = process.process_job_titles(jobs)
         if len(jobs) > 0:
             # update company in database to found
             sqlQueries.update_company(company)
         return jobs
-    
+        
     except Exception as e:
         # send email about scrapping error
         error=f"Exception parsing {company} "+ e
