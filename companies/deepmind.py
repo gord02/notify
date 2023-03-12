@@ -37,7 +37,7 @@ def get_data():
     
     except Exception as e:
         # send email about scrapping error
-        error=f"Exception parsing {company} "+ e
+        error=f"Exception parsing {company} "+ repr(e)
         print(error)
         notify.parsing_error(error)
         return jobs

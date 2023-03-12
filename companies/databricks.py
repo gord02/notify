@@ -18,7 +18,7 @@ from logic import notify
 from logic import sqlQueries
 
 def get_data(): 
-    company =  "DRW"
+    company =  "Databricks"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
@@ -26,17 +26,21 @@ def get_data():
 
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://drw.com/work-at-drw/category/campus/"
+        url = "https://www.databricks.com/company/careers/open-positions"
         driver.get(url)
-
+        
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
         driver.quit()
-        elements = soup.select("a > div > h3")
-        locations = soup.select("a > div > p")
-        for i, element in enumerate (elements):
-            jobs.append(element.contents[0] + " (" + locations[i].contents[0]+ ")")
-                     
+        elements = soup.select("a span")
+     
+        i = 0
+        # there will be a second a span for every span which is its location
+        while i+1 < len(elements):
+            jobs.append(elements[i].contents[0] + " (" + elements[i+1].contents[0] + ")")
+            # skip to next job title 
+            i = i +2;
+            
         jobs = process.process_job_titles(jobs)
         if len(jobs) > 0:
             # update company in database to found

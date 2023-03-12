@@ -18,7 +18,7 @@ from logic import notify
 from logic import sqlQueries
 
 def get_data(): 
-    company =  "DRW"
+    company =  "Schonfeld"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
@@ -26,17 +26,21 @@ def get_data():
 
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://drw.com/work-at-drw/category/campus/"
+        url = "https://boards.greenhouse.io/schonfeld?ref=levels.fyi"
         driver.get(url)
-
+        
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
         driver.quit()
-        elements = soup.select("a > div > h3")
-        locations = soup.select("a > div > p")
-        for i, element in enumerate (elements):
-            jobs.append(element.contents[0] + " (" + locations[i].contents[0]+ ")")
-                     
+        elements = soup.select("div.opening a")
+        locations = soup.select("span.location")
+    
+        i = 0
+        while i < len(elements):
+            jobs.append(elements[i].contents[0] + " (" + locations[i].contents[0] + ")")
+            # skip to next job title 
+            i = i+ 1
+            
         jobs = process.process_job_titles(jobs)
         if len(jobs) > 0:
             # update company in database to found

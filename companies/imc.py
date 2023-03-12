@@ -18,7 +18,7 @@ from logic import notify
 from logic import sqlQueries
 
 def get_data(): 
-    company =  "DRW"
+    company =  "IMC"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
@@ -26,17 +26,23 @@ def get_data():
 
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://drw.com/work-at-drw/category/campus/"
+        url = "https://imc.wd5.myworkdayjobs.com/en-US/invitation/jobs/details/Quant-Trader-Intern---Summer-2023_REQ-01963?workerSubType=71540894c45741dfba126cdff9489e52"
         driver.get(url)
-
+        
+        # wait for the specifc component with this class name to rendered before scraping
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "css-129m7dg")))
+       
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
         driver.quit()
-        elements = soup.select("a > div > h3")
-        locations = soup.select("a > div > p")
-        for i, element in enumerate (elements):
-            jobs.append(element.contents[0] + " (" + locations[i].contents[0]+ ")")
-                     
+        elements = soup.select("h3 > a")
+
+        i = 0
+        while i < len(elements):
+            jobs.append(elements[i].contents[0])
+            # skip to next job title 
+            i = i+ 1
+            
         jobs = process.process_job_titles(jobs)
         if len(jobs) > 0:
             # update company in database to found
@@ -45,7 +51,7 @@ def get_data():
         
     except Exception as e:
         # send email about scrapping error
-        error=f"Exception parsing {company} "+ repr(e)
+        error=f"Exception parsing {company}: "+ repr(e)
         print(error)
         notify.parsing_error(error)
         return jobs

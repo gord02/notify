@@ -18,7 +18,7 @@ from logic import notify
 from logic import sqlQueries
 
 def get_data(): 
-    company =  "DRW"
+    company =  "OpenAi"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
@@ -26,16 +26,16 @@ def get_data():
 
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://drw.com/work-at-drw/category/campus/"
+        url = "https://openai.com/careers/search"
         driver.get(url)
 
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
         driver.quit()
-        elements = soup.select("a > div > h3")
-        locations = soup.select("a > div > p")
-        for i, element in enumerate (elements):
-            jobs.append(element.contents[0] + " (" + locations[i].contents[0]+ ")")
+        elements = soup.select("a > h3")
+
+        for element in elements:
+            jobs.append(element.contents[0])
                      
         jobs = process.process_job_titles(jobs)
         if len(jobs) > 0:

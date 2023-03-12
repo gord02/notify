@@ -37,7 +37,7 @@ def get_data():
         driver.quit()
         elements = soup.select("h3 > a")
         for element in elements:
-            print(element.contents[0])
+            jobs.append(element.contents[0])
 
         jobs = process.process_job_titles(jobs)
         if len(jobs) > 0:
@@ -47,7 +47,7 @@ def get_data():
         
     except Exception as e:
         # send email about scrapping error
-        error=f"Exception parsing {company} "+ e
+        error=f"Exception parsing {company} "+ repr(e)
         print(error)
         notify.parsing_error(error)
         return jobs

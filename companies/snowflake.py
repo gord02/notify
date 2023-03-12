@@ -18,7 +18,7 @@ from logic import notify
 from logic import sqlQueries
 
 def get_data(): 
-    company =  "DRW"
+    company =  "Snowflake"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
@@ -46,7 +46,7 @@ def get_data():
         
     except Exception as e:
         # send email about scrapping error
-        error=f"Exception parsing {company} "+ e
+        error=f"Exception parsing {company} "+ repr(e)
         print(error)
         notify.parsing_error(error)
         return jobs
