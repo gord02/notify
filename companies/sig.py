@@ -38,7 +38,12 @@ def get_data():
             jobs.append(element.contents[0])
         
         while(True):
+            # if(next != None and 'href' not in next.attrs):
+            # print(next)
+            # print("next: ", next.attrs )
+            # print("next: ", next.contents )
             if('href' not in next.attrs):
+                print("not found")
                 break
             
             driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
@@ -62,7 +67,8 @@ def get_data():
         # send email about scrapping error
         error=f"Exception parsing {company} "+ repr(e)
         print(error)
-        notify.parsing_error(error)
+        # notify.parsing_error(error)
+        jobs = process.process_job_titles(jobs) # ad this to all files
         return jobs
         
 # get_data()

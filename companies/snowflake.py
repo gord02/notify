@@ -34,10 +34,14 @@ def get_data():
         driver.quit()
         elements = soup.select("div.job-title > span")
         locations = soup.select("span.job-location")
-        
-        for i, element in enumerate (elements):            
-            jobs.append(element.contents[0] + " (" + locations[i].contents[8].strip()+ ")")
-                     
+
+        for i, element in enumerate (elements):     
+            job= element.contents[0]
+            if(len(locations[i].contents) >=9):
+                job = job + " (" + locations[i].contents[8].strip()+ ")"
+            # print(job)
+            jobs.append(job)
+         
         jobs = process.process_job_titles(jobs)
         if len(jobs) > 0:
             # update company in database to found
@@ -50,5 +54,5 @@ def get_data():
         print(error)
         notify.parsing_error(error)
         return jobs
-        
+
 # get_data()

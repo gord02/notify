@@ -48,7 +48,7 @@ def get_data():
         # page = 1
    
         for x in elements:
-            print(x.contents[0])
+            # print(x.contents[0])
             jobs.append(x.contents[0])
 
             jobs = process.process_job_titles(jobs)

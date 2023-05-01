@@ -43,14 +43,14 @@ def get_data():
             # print(x.contents[0])
             jobs.append(x.contents[0])
 
-            jobs = process.process_job_titles(jobs)
-            print(jobs)
-            if len(jobs) > 0:
-                # update company in database to found
-                print("here")
-                sqlQueries.update_company(company)
+        jobs = process.process_job_titles(jobs)
+        # print(jobs)
+        if len(jobs) > 0:
+            # update company in database to found
+            print("here")
+            sqlQueries.update_company(company)
             
-            return jobs
+        return jobs
         
     except Exception as e:
         # send email about scrapping error

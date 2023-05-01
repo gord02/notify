@@ -42,4 +42,4 @@ def get_data():
         notify.parsing_error(error)
         return jobs
         
-get_data()
+# get_data()

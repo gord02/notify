@@ -30,7 +30,7 @@ def get_data():
         i=0
         # each p tag is the job name and the following p tag is the location 
         while i+1 < len(elements):
-            jobs.append(elements[i].contents[0] + ": " + repr(e)lements[i+1].contents[0])
+            jobs.append(elements[i].contents[0] + ": " + elements[i+1].contents[0])
             # skips to the next job title
             i = i + 2
 

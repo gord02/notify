@@ -10,9 +10,10 @@ def create_connection(host_name, user_name, user_passwd, dm_name):
                                              passwd=user_passwd,
                                               database=dm_name
                                             )
-        print("connection to MySql DB successful")
+        # print("connection to MySql DB successful")
     except Error as e:
-        print(f"The error '{e}' occurred")
+        errorMsg= f"create_connection error: The error '{e}' occurred"
+        # error(errorMsg)
     
     return connection
 
@@ -21,18 +22,18 @@ def create_database(connection, query):
     
     try:
         cursor.execute(query)
-        print("database created successfully")
+        # print("database created successfully")
     except Error as e:
-        print(f"The error '{e}' occurred")
+        print(f"create_database error: The error '{e}' occurred")
         
 def execute_query(connection, query):
     cursor = connection.cursor()
     try:
         cursor.execute(query)
         connection.commit()
-        print("query executed successfully")
+        # print("query executed successfully")
     except Error as e:
-        print(f"The error '{e}' occurred")
+        print(f"execute_query error: The error '{e}' occurred")
 
 def query_companies(connection, query):
     cursor = connection.cursor()
@@ -43,7 +44,7 @@ def query_companies(connection, query):
         result = cursor.fetchall()
         return result
     except Error as e:
-        print(f"The error '{e}' occurred")
+        print(f"query_companies error: The error '{e}' occurred")
     
 def update_company_status(file_name):
     connection = create_connection("localhost", "root", "", "checkon") 
@@ -65,15 +66,6 @@ CREATE TABLE IF NOT EXISTS companies (
     fileName TEXT,
     found INT
 )
-"""
-add_companies = """
-    INSERT INTO companies(company, fileName, found)
-    VALUES 
-    ("Snapchat", "snap.py", 0),
-    ("Addepar", "addepar.py", 0),
-    ("Quora", "quora.py", 0),
-    ("twoSigma", "twoSigma.py", 0),
-    ("Yelp", "yelp.py", 0);
 """
 
 def get_companies(): 
@@ -103,10 +95,9 @@ def add_company(company, fileName):
         VALUES ('{company}', '{fileName}', 0);
     """
     execute_query(connection, add)
+    order_companies()
     
-# add_company("Zoom","zoom.py")
-
-def reset_company_found():
+def reset_all_company_found():
     connection = create_connection("localhost", "root", "", "checkon") 
     
     update=""" UPDATE companies
@@ -115,4 +106,33 @@ def reset_company_found():
     """
     execute_query(connection, update)
     
-# reset_company_found()
+def reset_company_found(company):
+    connection = create_connection("localhost", "root", "", "checkon") 
+    
+    update=f""" UPDATE companies
+        SET found = 0
+        WHERE Company = "{company}";
+    """
+    execute_query(connection, update)
+    
+def order_companies():
+    connection = create_connection("localhost", "root", "", "checkon") 
+    order="SELECT * FROM companies ORDER BY company;"
+    execute_query(connection, order)
+
+def add_companies():
+    connection = create_connection("localhost", "root", "", "checkon") 
+    
+    companies = """
+    INSERT INTO companies(company, fileName, found)
+    VALUES 
+    ("PathAi", "pathAi.py", 0),
+    ("Rippling", "rippling.py", 0);
+    """
+    execute_query(connection, companies)
+    # order_companies()
+
+# reset_all_company_found()
+# add_company("Snowflake","snowflake.py")
+# reset_company_found("LinkedIn")
+# add_companies()

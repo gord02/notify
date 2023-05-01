@@ -25,15 +25,6 @@ def get_data():
     url = "https://careers.twosigma.com/careers/SearchJobs/Intern?2047=%5B9813555%5D&2047_format=1532&listFilterMode=1"
     jobs = []
     try:
-        driver.get(url)
-        content = driver.page_source
-        soup = BeautifulSoup(content, "lxml")
-        driver.quit()
-
-        page = soup.select_one("a.paginationLink")
-        # print("first linK attrs: ", firstLink.attrs)
-        firstLink= page.attrs['href']
-
         # set for urls and jobs
         urlSet = set()
         titles = set()
@@ -41,24 +32,21 @@ def get_data():
         # Create queue to store urls
         q = []
 
-        if(firstLink):
-            q.append(firstLink)
-            
+
+        q.append(url)   
+        urlSet.add(url)
             
         # For each page, first push current to set, get all links for other pages, and if not in set, push to queue
         while len(q) > 0:
             curLink = q.pop()
             urlSet.add(curLink)
-            
             driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-
             driver.get(curLink)
             content = driver.page_source
             soup = BeautifulSoup(content, "lxml")
             driver.quit()
             
             elements = soup.select("a.mobileShow")    
-            # print("elements: ", elements)
 
             for element in elements:
                 titles.add(element.contents[0])
@@ -68,11 +56,10 @@ def get_data():
             
             for link in paginationLinks:
                 urlLink = link.get("href")
-                
+                # print("urlLink: ", urlLink)
                 if urlLink not in urlSet:
                     q.insert(0, urlLink)
                     urlSet.add(curLink)
-        
         
         # print("titles: ", titles)
         jobs = process.process_job_titles(titles)
@@ -89,6 +76,5 @@ def get_data():
         print(error)
         notify.parsing_error(error)
         return jobs
-        
+    
 # get_data()
-

@@ -25,11 +25,14 @@ def send_email(data):
     ln = "\n"
     indent = '    '
     for company in data:
+        company[0] = company[0].capitalize()
         message += company[0] + ln
         for i,job in enumerate(company):
            if i>=1:
-            message += indent + "- " + job + ln
-     
+            message += indent + "- " + job + ln 
+        message += ln
+    # print(message)
+    
     content = Content("text/plain", message)
     mail = Mail(from_email, to_email, subject, content)
 
@@ -75,3 +78,5 @@ def test_email():
 
     # Send an HTTP POST request to /mail/send
     send_grid.client.mail.send.post(request_body=mail_json)
+    
+# send_email([["Google", "SWE"], ["reddit", "SWE"]])

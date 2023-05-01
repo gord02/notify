@@ -54,6 +54,7 @@ def get_data():
             elements = soup.select("div h2")
             for element in elements:
                 jobs.append(element.contents[0])
+                # print(element.contents[0])
             i+=1   
             
         jobs = process.process_job_titles(jobs)
@@ -65,7 +66,9 @@ def get_data():
         # send email about scrapping error
         error=f"Exception parsing {company} "+ repr(e)
         print(error)
-        notify.parsing_error(error)
+        exc_type, exc_tb = sys.exc_info()
+        print("exception type: ", exc_type, " excpetion line number", exc_tb )
+        # notify.parsing_error(error)
         return jobs
         
 
