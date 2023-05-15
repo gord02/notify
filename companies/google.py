@@ -57,11 +57,7 @@ def get_data():
                 # print(element.contents[0])
             i+=1   
             
-        jobs = process.process_job_titles(jobs)
-        if len(jobs) > 0:
-            # update company in database to found
-            sqlQueries.update_company(company)
-        return jobs
+
     except Exception as e:
         # send email about scrapping error
         error=f"Exception parsing {company} "+ repr(e)
@@ -69,8 +65,12 @@ def get_data():
         exc_type, exc_tb = sys.exc_info()
         print("exception type: ", exc_type, " excpetion line number", exc_tb )
         # notify.parsing_error(error)
-        return jobs
         
-
+    jobs = process.process_job_titles(jobs)
+    
+    if len(jobs) > 0:
+        # update company in database to found
+        sqlQueries.update_company(company)
+    return jobs
     
 # get_data()

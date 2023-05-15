@@ -40,18 +40,17 @@ def get_data():
             jobs.append(elements[i].contents[0] + " (" + locations[i].contents[0] + ")")
             # skip to next job title 
             i = i+ 1
-            
-        jobs = process.process_job_titles(jobs)
-        if len(jobs) > 0:
-            # update company in database to found
-            sqlQueries.update_company(company)
-        return jobs
         
     except Exception as e:
         # send email about scrapping error
         error=f"Exception parsing {company} "+ repr(e)
         print(error)
         notify.parsing_error(error)
-        return jobs
+        
+    jobs = process.process_job_titles(jobs)
+    if len(jobs) > 0:
+        # update company in database to found
+        sqlQueries.update_company(company)
+    return jobs
         
 # get_data()

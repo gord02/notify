@@ -17,6 +17,7 @@ def get_data():
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
+    jobs = []
 
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
@@ -26,25 +27,21 @@ def get_data():
         soup = BeautifulSoup(content, "lxml")
         driver.quit()
 
-        titles = set()
         elements = soup.select("th a")
         for element in elements:
-            titles.add(element.contents[0])
-        # for title in titles:
-        #     print(title)
-        jobs = process.process_job_titles(titles)
-        if len(jobs) > 0:
-            # update company in database to found
-            # update company in database to found
-            sqlQueries.update_company(company)
-            
-        return jobs
+            jobs.add(element.contents[0])
 
     except Exception as e:
         # send email about scrapping error
         error=f"Exception parsing {company} "+ repr(e)
         print(error)
         notify.parsing_error(error)
-        return jobs
+    
+    jobs = process.process_job_titles(jobs)
+    
+    if len(jobs) > 0:
+        # update company in database to found
+        sqlQueries.update_company(company)
+    return jobs
     
 # get_data()

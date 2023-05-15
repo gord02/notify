@@ -27,7 +27,8 @@ def get_data():
         driver.quit()
         elements = soup.select("tr.jobs-table-row td")
         for element in elements:
-            jobs.append(element.contents[0])
+            if len(element.contents) > 0:
+                jobs.append(element.contents[0])
 
         jobs = process.process_job_titles(jobs)
         if len(jobs) > 0:
