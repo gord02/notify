@@ -1,3 +1,4 @@
+#! /Users/gordon/UpdateProject/update/updateEnv/bin/python3
 import os
 from datetime import date
 
@@ -47,5 +48,5 @@ def check_on():
         print("Companies with job postings: " , len(to_render))
         notify.send_email(to_render)
         # exec(open("app.py").read())
-    
+
 check_on()

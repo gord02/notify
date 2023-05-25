@@ -80,3 +80,5 @@ def test_email():
     send_grid.client.mail.send.post(request_body=mail_json)
     
 # send_email([["Google", "SWE"], ["reddit", "SWE"]])
+
+# test_email()
