@@ -58,7 +58,8 @@ def parsing_error(company):
     mail_json = mail.get()
 
     # Send an HTTP POST request to /mail/send
-    send_grid.client.mail.send.post(request_body=mail_json)
+    # commented out line since errors aren't important
+    # send_grid.client.mail.send.post(request_body=mail_json)
     
 def test_email():
     send_grid = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)

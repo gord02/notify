@@ -23,7 +23,7 @@ def get_data():
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
     jobs = []
-
+    start = time.time()
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
         url = "https://careers.sig.com/search-results?keywords=intern&ref=levels.fyi"
@@ -42,8 +42,9 @@ def get_data():
             # print(next)
             # print("next: ", next.attrs )
             # print("next: ", next.contents )
+            
             if('href' not in next.attrs):
-                print("not found")
+                # print("not found")
                 break
             
             driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
@@ -61,13 +62,15 @@ def get_data():
     except Exception as e:
         # send email about scrapping error
         error=f"Exception parsing {company} "+ repr(e)
-        print(error)
+        # print(error)
+        print("duration(seconds): ", (time.time() - start))
         notify.parsing_error(error)
         
     jobs = process.process_job_titles(jobs)
     
     if len(jobs) > 0:
         # update company in database to found
+        print("updating")
         sqlQueries.update_company(company)
     return jobs
         

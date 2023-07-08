@@ -20,7 +20,7 @@ def get_data():
     opts.add_argument("--headless")
     opts.add_argument('--disable-blink-features=AutomationControlled')
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-    
+    start = time.time()
     jobs = []
     try:
         url = "https://www.yelp.careers/us/en/search-results"
@@ -65,6 +65,7 @@ def get_data():
         # send email about scrapping error
         error=f"Exception parsing {company} "+ repr(e)
         print(error)
+        print("duration(seconds): ", (time.time() - start))
         notify.parsing_error(error)
 
     jobs = process.process_job_titles(jobs)

@@ -75,4 +75,4 @@ def get_data():
         sqlQueries.update_company(company)
     return jobs
     
-# get_data()
+get_data()

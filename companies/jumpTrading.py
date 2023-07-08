@@ -39,7 +39,6 @@ def get_data():
         error=f"Exception parsing {company} "+ repr(e)
         print(error)
         notify.parsing_error(error)
-
     jobs = process.process_job_titles(jobs)
     
     if len(jobs) > 0:

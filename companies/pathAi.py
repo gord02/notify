@@ -24,7 +24,7 @@ def get_data():
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
     jobs = []
-
+    start = time.time()
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
         url = "https://www.pathai.com/careers/"
@@ -54,7 +54,8 @@ def get_data():
     except Exception as e:
         # send email about scrapping error
         error=f"Exception parsing: {company} "+ repr(e)
-        print(error)
+        # print(error)
+        print("duration(seconds): ", (time.time() - start))
         notify.parsing_error(error)
 
     jobs = process.process_job_titles(jobs)

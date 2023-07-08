@@ -26,8 +26,8 @@ def get_data():
 
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
     # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-    url = "https://www.metacareers.com/jobs?offices[0]=Remote%2C%20US&offices[1]=Remote%2C%20Canada&roles[0]=intern"
-    jobs = []
+    url = "https://www.metacareers.com/jobs?leadership_levels[0]=Individual%20Contributor&teams[0]=Internship%20-%20Engineering%2C%20Tech%20%26%20Design"
+    jobs = []      
     
     try:
         

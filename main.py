@@ -12,7 +12,10 @@ def check_on():
 
     today = date.today()
     d2 = today.strftime("%B %d, %Y")
-    print( "======================  ", "date: ", d2, "  ======================")
+    t = time.localtime()
+    current_time = time.strftime("%H:%M:%S", t)
+    
+    print( "======================  ", "date: ", d2," time: ", current_time ,"  ======================")
     sql_company_data = queries.get_companies()
     company_files_names = []
     
@@ -22,7 +25,10 @@ def check_on():
     # gets filenames of companies that haven't been found yet
     for row in sql_company_data:
         company_files_names.append(row[1])
-
+    print(company_files_names)
+    return
+    # queries.update_company("sig.py")
+    # return 
     start_time = time.time()
     for file in company_files_names:
         # removing file extension
@@ -35,7 +41,7 @@ def check_on():
             jobs.insert(0, name)
             
             if(len(jobs) > 1):
-                # print(name)
+                print(name)
                 to_render.append(jobs) 
         except Exception as e:
             print(f"Exception when getting data from company: {name}: ", e)
