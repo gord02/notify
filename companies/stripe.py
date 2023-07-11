@@ -20,11 +20,11 @@ def get_data():
     opts.add_argument("--headless")
     jobs = []
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
+    url = "https://stripe.com/jobs/search"
 
     try:
         # more specific link
         # https://stripe.com/jobs/search?teams=University&office_locations=North+America--Chicago&office_locations=North+America--Mexico+City&office_locations=North+America--New+York&office_locations=North+America--Seattle&office_locations=North+America--South+San+Francisco&office_locations=North+America--Toronto
-        url = "https://stripe.com/jobs/search"
         driver.get(url)
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
@@ -46,5 +46,6 @@ def get_data():
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
-    return jobs
-        
+    
+    jobs.insert(1, url) 
+   return(jobs, success)

@@ -22,6 +22,10 @@ from logic import notify
 from logic import sqlQueries
 
 def get_data():  
+    url = "https://block.xyz/careers?types=Intern"
+    jobs = []
+    success = True
+    
     try:
         company =  "Block"
         opts = Options()
@@ -29,8 +33,6 @@ def get_data():
         opts.add_argument("--headless")
 
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://block.xyz/careers?types=Intern"
-        jobs = []
 
         driver.get(url)
         content = driver.page_source
@@ -48,6 +50,8 @@ def get_data():
         error=f"Exception parsing {company} "+ repr(e)
         print(error)
         notify.parsing_error(error)
+        success = False
+        
 
     jobs = process.process_job_titles(jobs)
     # print(jobs)
@@ -55,7 +59,7 @@ def get_data():
         # update company in database to found
         sqlQueries.update_company(company)
             
-    return jobs
-        
+    jobs.insert(1, url)
+   return(jobs, success)
 
 # get_data()

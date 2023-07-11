@@ -24,6 +24,7 @@ def get_data():
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
     url = "https://careers.twosigma.com/careers/SearchJobs/Intern?2047=%5B9813555%5D&2047_format=1532&listFilterMode=1"
     jobs = []
+    
     try:
         # set for urls and jobs
         urlSet = set()
@@ -73,6 +74,7 @@ def get_data():
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
-    return jobs
     
-get_data()
+    jobs.insert(1, url) 
+   return(jobs, success)   
+# get_data()

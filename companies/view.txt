@@ -1,0 +1,2 @@
+Exception parsing Five Rings WebDriverException()
+Error scrapping company Exception parsing Five Rings WebDriverException()

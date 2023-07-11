@@ -23,10 +23,11 @@ def get_data():
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
     jobs = []
+    url = "https://optiver.com/working-at-optiver/career-opportunities/?_gl=1*14qqpxn*_up*MQ..*_ga*Nzk0MDYzODM5LjE2NzgwNTExMDM.*_ga_YMLN3CLJVE*MTY3ODA1MTEwMS4xLjAuMTY3ODA1MTEwMS4wLjAuMA..&numberposts=10"
+    
 
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://optiver.com/working-at-optiver/career-opportunities/?_gl=1*14qqpxn*_up*MQ..*_ga*Nzk0MDYzODM5LjE2NzgwNTExMDM.*_ga_YMLN3CLJVE*MTY3ODA1MTEwMS4xLjAuMTY3ODA1MTEwMS4wLjAuMA..&numberposts=10"
         driver.get(url)
 
         content = driver.page_source
@@ -49,6 +50,7 @@ def get_data():
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
-    return jobs
-        
+    
+    jobs.insert(1, url) 
+   return(jobs, success)
 # get_data()

@@ -43,6 +43,7 @@ def get_data():
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
-    return jobs
     
+    jobs.insert(1, url) 
+    return (jobs, success)    
 # get_data() 

@@ -23,10 +23,11 @@ def get_data():
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
     jobs = []
+    url = "https://www.twitch.tv/jobs/en/careers/"
+    
 
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://www.twitch.tv/jobs/en/careers/"
         driver.get(url)
         
         content = driver.page_source
@@ -50,6 +51,7 @@ def get_data():
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
-    return jobs
-        
+    
+    jobs.insert(1, url) 
+   return(jobs, success)
 # get_data()

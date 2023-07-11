@@ -20,9 +20,10 @@ def get_data():
     opts.add_argument("--headless")
     jobs = []
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-
+    url = "https://careers.zoom.us/global-emerging-talent"
+    
+    success = True
     try:
-        url = "https://careers.zoom.us/global-emerging-talent"
         driver.get(url)
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
@@ -38,6 +39,7 @@ def get_data():
         error=f"Exception parsing {company} "+ repr(e)
         print(error)
         notify.parsing_error(error)
+        success = False
 
 
     jobs = process.process_job_titles(jobs)
@@ -45,6 +47,7 @@ def get_data():
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
-    return jobs
-
+    
+    jobs.insert(1, url) 
+    return jobs(jobs, success)
 # get_data()

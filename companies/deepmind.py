@@ -18,9 +18,13 @@ def get_data():
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
     jobs = []
+    
+    success = True
+    
+    url = "https://www.deepmind.com/careers/jobs?teams=Engineering&sort=newest_first"
+    
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://www.deepmind.com/careers/jobs?teams=Engineering&sort=newest_first"
         driver.get(url)
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
@@ -31,16 +35,19 @@ def get_data():
                 jobs.append(element.contents[0])
 
         jobs = process.process_job_titles(jobs)
-        if len(jobs) > 0:
-            # update company in database to found
-            sqlQueries.update_company(company)
-        return jobs
+
     
     except Exception as e:
         # send email about scrapping error
         error=f"Exception parsing {company} "+ repr(e)
         print(error)
         notify.parsing_error(error)
-        return jobs
+        success = False
         
+    if len(jobs) > 0:
+        # update company in database to found
+        sqlQueries.update_company(company)
+        
+    jobs.insert(1, url)
+   return(jobs, success)
 # get_data()

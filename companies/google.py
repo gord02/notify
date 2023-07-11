@@ -20,14 +20,18 @@ def get_data():
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
     jobs = []
+    url = "https://careers.google.com/jobs/results/?degree=BACHELORS&distance=50&employment_type=INTERN&jex=ENTRY_LEVEL&location=United%20States&location=Canada"
+    success = True
+    
 
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        # try:
-        url = "https://careers.google.com/jobs/results/?degree=BACHELORS&distance=50&employment_type=INTERN&jex=ENTRY_LEVEL&location=United%20States&location=Canada"
+
         driver.get(url)
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
+        print(soup)
+        
         driver.quit()
         
         # getting the number of job pages to search over 
@@ -51,10 +55,12 @@ def get_data():
             driver.get(newUrl)
             content = driver.page_source
             soup = BeautifulSoup(content, "lxml")
+            print(soup)
             elements = soup.select("div h2")
+            print(elements)
             for element in elements:
-                jobs.append(element.contents[0])
-                # print(element.contents[0])
+                # jobs.append(element.contents[0])
+                print(element.contents[0])
             i+=1   
             
 
@@ -65,12 +71,16 @@ def get_data():
         exc_type, exc_tb = sys.exc_info()
         print("exception type: ", exc_type, " excpetion line number", exc_tb )
         # notify.parsing_error(error)
+        success = False
+        
         
     jobs = process.process_job_titles(jobs)
     
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
-    return jobs
     
+    jobs.insert(1, url)
+    return (jobs, success)    
+
 # get_data()

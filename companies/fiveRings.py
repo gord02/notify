@@ -23,19 +23,22 @@ def get_data():
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
     jobs = []
+    url = "https://fiverings.avature.net/careers"
+    success = True
+    
 
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://fiverings.avature.net/careers"
         driver.get(url)
 
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
-
+        print(soup)
         driver.quit()
         elements = soup.select("h3 > a")
         for element in elements:
             jobs.append(element.contents[0].strip())
+            print(element.contents[0].strip())
 
         
     except Exception as e:
@@ -43,12 +46,14 @@ def get_data():
         error=f"Exception parsing {company} "+ repr(e)
         print(error)
         notify.parsing_error(error)
+        success = False
         
     jobs = process.process_job_titles(jobs)
     
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
-    return jobs
-        
-# get_data()
+    
+    jobs.insert(1, url) 
+    return (jobs, success) 
+get_data()

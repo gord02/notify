@@ -28,14 +28,14 @@ def get_data():
     
     user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36" 
     opts.add_argument("user-agent=%s" % user_agent) 
-
+    url = "https://www.rippling.com/careers/open-roles"
+    
     # ---
 
     jobs = []
     start = time.time()
     try:
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-        url = "https://www.rippling.com/careers/open-roles"
         driver.get(url)
         
         # wait for the specifc component with this class name to rendered before scraping
@@ -78,8 +78,9 @@ def get_data():
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
-    return jobs
-        
+    
+    jobs.insert(1, url) 
+   return(jobs, success)
 # get_data()
 
 

@@ -28,6 +28,7 @@ def get_data():
     # driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
     url = "https://www.metacareers.com/jobs?leadership_levels[0]=Individual%20Contributor&teams[0]=Internship%20-%20Engineering%2C%20Tech%20%26%20Design"
     jobs = []      
+    success = True
     
     try:
         
@@ -48,7 +49,7 @@ def get_data():
         # page = 1
    
         for x in elements:
-            # print(x.contents[0])
+            print(x.contents[0])
             jobs.append(x.contents[0])
 
     
@@ -57,13 +58,16 @@ def get_data():
         error=f"Exception parsing {company} "+ repr(e)
         print(error)
         notify.parsing_error(error)
+        success = False
         
     jobs = process.process_job_titles(jobs)
     
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
-    return jobs
-        
-# get_data()
+    
+    jobs.insert(1, url)
+    return(jobs, success)
+
+get_data()
 
