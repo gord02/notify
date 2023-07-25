@@ -1,49 +1,41 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
-# from seleniumwire import webdriver
+from seleniumwire import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-
 from selenium.common.exceptions import WebDriverException
-
-import sys
-import time
-sys.path.insert(0,'..') #this works relative to where to program was run from 
 
 from logic import process
 from logic import notify
 from logic import sqlQueries
 
 def get_data(): 
-    company =  "Netflix"
+    company =  "Figma"
     opts = Options()
     # so that browser instance doesn't pop up
     opts.add_argument("--headless")
     jobs = []
-    url = "https://jobs.netflix.com/search?team=Data%20Science%20and%20Engineering"
+    url = "https://www.figma.com/careers/#job-openings"
     success = True
+    
 
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
     try:
-        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-
         driver.get(url)
-        # wait for the specifc component with this class name to rendered before scraping
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "e1rpdjew0")))
-
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
-
+        # print(soup)
         driver.quit()
-        elements = soup.select("h4.e1rpdjew0")
-        for element in elements:
-            jobs.append(element.contents[0])
 
-    
+        
+        elements = soup.select("div.figma-cn3xcj a")
+        for element in elements:
+            # titles.add(element.contents[0])
+            jobs.append(element.contents[0])
+        
+       
     # this is an exception caused by abnormal circumstances
     except WebDriverException as wbe:
         error=f"Exception parsing {company} "+ repr(wbe)
@@ -60,11 +52,12 @@ def get_data():
         success = False
         
     jobs = process.process_job_titles(jobs)
-    
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
+        
+    jobs.insert(1, url) 
     
-    jobs.insert(0, url) 
-    return(jobs, success)
-# get_data()
+    return (jobs, success)    
+    
+get_data()

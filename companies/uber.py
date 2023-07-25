@@ -6,6 +6,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.by import By
 
+from selenium.common.exceptions import WebDriverException
+
 import sys
 sys.path.insert(0,'..') #this works relative to where to program was run from 
 
@@ -22,6 +24,7 @@ def get_data():
     jobs = []
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
     url = "https://www.uber.com/ca/en/careers/list/?department=University&team=University&team=Engineering"
+    success = True
 
     try:
         # https://www.uber.com/ca/en/careers/list/?location=CAN-Ontario-Toronto&location=USA-Illinois-Chicago&location=USA-California-San%20Fransisco&location=USA-New%20York-New%20York%20City&department=University&team=University&team=Engineering
@@ -41,11 +44,20 @@ def get_data():
         #     print(loc.contents[0])
         
     
-    except Exception as e:
+    # this is an exception caused by abnormal circumstances
+    except WebDriverException as wbe:
+        error=f"Exception parsing {company} "+ repr(wbe)
+        # print(error)
+        print("An exception occurred:", type(wbe).__name__) # An exception occurred: ZeroDivisionError
         # send email about scrapping error
-        error=f"Exception parsing {company} "+ repr(e)
-        print(error)
         notify.parsing_error(error)
+        
+    # this is most likely an error caused by computer not being fully awake when code is run leading to max retry or ConnectionError error
+    except ConnectionError as e:
+        print("An exception occurred:", type(e).__name__) # An exception occurred: ZeroDivisionError
+        # print("e: ", repr(e))
+        # we want to retry when computer is fully awake
+        success = False
 
     jobs = process.process_job_titles(jobs)
     
@@ -53,7 +65,7 @@ def get_data():
         # update company in database to found
         sqlQueries.update_company(company)
         
-    jobs.insert(1, url) 
-    return jobs(jobs, success)
+    jobs.insert(0, url) 
+    return (jobs, success)
     
 # get_data()

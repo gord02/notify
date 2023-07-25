@@ -31,7 +31,7 @@ def execute_query(connection, query):
     try:
         cursor.execute(query)
         connection.commit()
-        print("query executed successfully")
+        # print("query executed successfully")
     except Error as e:
         print(f"execute_query error: The error '{e}' occurred")
 
@@ -133,6 +133,6 @@ def add_companies():
     # order_companies()
 
 # reset_all_company_found()
-# add_company("Snowflake","snowflake.py")
+# add_company("Figma","figma.py")
 # reset_company_found("LinkedIn")
 # add_companies()

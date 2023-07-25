@@ -62,3 +62,63 @@
 
 
 # print(url)
+# tryCount = dict()
+# list = ["s", "s", "s", "b", "b", "d", "z", "b", "s", "b"]
+# for name in list: 
+
+#     # tryCount[name]+=1
+    
+#     # add file to try count
+#     if name not in tryCount.keys():
+#         tryCount[name] = 1
+#     # if cur value after addition is less than 3,
+#     elif( tryCount[name] < 3):
+#         tryCount[name] = tryCount[name] + 1
+#     else:
+#         print(f"max retries reached for {name}")
+        
+# print("retries: ", tryCount)
+
+# def run():
+#     print("ran")
+    
+# def start():
+#     print("start")
+
+
+# def test():
+#     print("ran")
+    
+# def test2():
+#     print("start")
+
+# test = {test:'blabla', test2:'blabla2'}
+# test = {"ran": ran, "start": start}
+
+# arr = [run, start]
+
+# for key, val in test.items():
+#     key()
+
+from bs4 import BeautifulSoup
+from selenium import webdriver
+
+options = webdriver.ChromeOptions()
+# driver = webdriver.Remote(
+#     command_executor='http://127.0.0.1:444/we/hub',
+#     options=chrome_options
+# )
+driver = webdriver.Remote(command_executor='http://localhost:4444/wd/hub', options=options )
+# url = "https://careers.google.com/jobs/results/?degree=BACHELORS&distance=50&employment_type=INTERN&jex=ENTRY_LEVEL&location=United%20States&location=Canada"
+url = "https://www.snap.com/en-US/jobs?lang=en-US"
+
+# driver.get("https://www.snap.com/en-US/jobs?lang=en-US")
+driver.get(url)
+content = driver.page_source
+soup = BeautifulSoup(content, "lxml")
+# print(soup)
+driver.quit()
+
+elements = soup.select("th a")
+for element in elements:
+    print(element.contents[0])

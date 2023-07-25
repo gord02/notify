@@ -9,6 +9,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
+from selenium.common.exceptions import WebDriverException
+
 import sys
 import time
 sys.path.insert(0,'..') #this works relative to where to program was run from 
@@ -33,27 +35,35 @@ def get_data():
 
         content = driver.page_source
         soup = BeautifulSoup(content, "lxml")
-        print(soup)
         driver.quit()
         elements = soup.select("h3 > a")
         for element in elements:
             jobs.append(element.contents[0].strip())
-            print(element.contents[0].strip())
+            # print(element.contents[0].strip())
 
         
-    except Exception as e:
+    # this is an exception caused by abnormal circumstances
+    except WebDriverException as wbe:
+        error=f"Exception parsing {company} "+ repr(wbe)
+        # print(error)
+        print("An exception occurred:", type(wbe).__name__) # An exception occurred: ZeroDivisionError
         # send email about scrapping error
-        error=f"Exception parsing {company} "+ repr(e)
-        print(error)
         notify.parsing_error(error)
+        
+    # this is most likely an error caused by computer not being fully awake when code is run leading to max retry or ConnectionError error
+    except ConnectionError as e:
+        print("An exception occurred:", type(e).__name__) # An exception occurred: ZeroDivisionError
+        # print("e: ", repr(e))
+        # we want to retry when computer is fully awake
         success = False
         
+        
     jobs = process.process_job_titles(jobs)
-    
+        
     if len(jobs) > 0:
         # update company in database to found
         sqlQueries.update_company(company)
     
-    jobs.insert(1, url) 
+    jobs.insert(0, url) 
     return (jobs, success) 
-get_data()
+# get_data()

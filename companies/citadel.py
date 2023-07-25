@@ -9,6 +9,9 @@ from logic import process
 from logic import notify
 from logic import sqlQueries
 
+from selenium.common.exceptions import WebDriverException
+
+
 def get_data():
     company = "Citadel"
     opts = Options()
@@ -31,11 +34,19 @@ def get_data():
             # print(element.contents[0])
             jobs.append(element.contents[0])
     
-    except Exception as e:
+    # this is an exception caused by abnormal circumstances
+    except WebDriverException as wbe:
+        error=f"Exception parsing {company} "+ repr(wbe)
+        # print(error)
+        print("An exception occurred:", type(wbe).__name__) # An exception occurred: ZeroDivisionError
         # send email about scrapping error
-        error=f"Exception parsing {company} "+ repr(e)
-        print(error)
         notify.parsing_error(error)
+        
+    # this is most likely an error caused by computer not being fully awake when code is run leading to max retry or ConnectionError error
+    except ConnectionError as e:
+        print("An exception occurred:", type(e).__name__) # An exception occurred: ZeroDivisionError
+        # print("e: ", repr(e))
+        # we want to retry when computer is fully awake
         success = False
         
 
@@ -45,6 +56,6 @@ def get_data():
         # update company in database to found
         sqlQueries.update_company(company)
     
-    jobs.insert(1, url)
+    jobs.insert(0, url)
     return (jobs, success)    
 # get_data() 

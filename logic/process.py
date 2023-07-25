@@ -10,7 +10,7 @@ def process_job_titles(titles):
     return swe_intern_job
 
 def wordScan(title):
-    if "Intern" in title and "Engineer" in title and "Internal" not in title and "PhD" not in title and "Security" not in title and "International" not in title and "Hardware" not in title:
+    if "Intern" in title and ("Engineer" in title  or "Developer" in title) and "Internal" not in title and "PhD" not in title and "Security" not in title and "International" not in title and "Hardware" not in title:
         return True
 
 # pass in filters relevant to persons i.e. us based, canada based, ML, SWE etc...

@@ -7,6 +7,8 @@ import sendgrid
 from email.message import EmailMessage
 from sendgrid.helpers.mail import Mail, Email, To, Content
 
+# import hyperlink
+
 receiver_email = os.getenv('EMAIL')
 # password = os.getenv('PASSWORD')
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
@@ -24,11 +26,20 @@ def send_email(data):
     message = ""
     ln = "\n"
     indent = '    '
+
     for company in data:
         company[0] = company[0].capitalize()
+        link = company[1]
+        # url = hyperlink.parse(link)
+        # linkStr = f"Link: {url}" 
+        
         message += company[0] + ln
+        message += link+ ln
+        # message += linkStr + ln
+        # message += url + ln
+        
         for i,job in enumerate(company):
-           if i>=1:
+           if i>=2:
             message += indent + "- " + job + ln 
         message += ln
     # print(message)
