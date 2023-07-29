@@ -95,7 +95,7 @@
 # test = {test:'blabla', test2:'blabla2'}
 # test = {"ran": ran, "start": start}
 
-# arr = [run, start]
+arr = [run, start] 
 
 # for key, val in test.items():
 #     key()
