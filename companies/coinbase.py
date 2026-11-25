@@ -1,26 +1,11 @@
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from seleniumwire import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service as ChromeService
+from logic.process import process_job_titles
+from logic.scrape import fetch_soup
 
-opts = Options()
-# so that browser instance doesn't pop up
-opts.add_argument("--headless")
 
-driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options = opts)
-url = "https://www.coinbase.com/careers/positions?department=Engineering"
-driver.get(url)
-content = driver.page_source
-soup = BeautifulSoup(content, "lxml")
-driver.quit()
-jobs = set()
-print(soup)
-elements = soup.select("div.kOaGIY")
-for element in elements:
-    print(element)
-    # jobs.add(element.contents)
+COMPANY_NAME = "Coinbase"
+URL = "https://www.coinbase.com/careers/positions?department=Engineering"
 
-for title in jobs:
-    print(title)
+
+def get_data():
+    soup = fetch_soup(URL)
+    return process_job_titles(soup.select("div.kOaGIY a, a"), URL)

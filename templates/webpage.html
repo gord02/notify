@@ -1,23 +1,104 @@
 <!doctype html>
-<html>
-    <head>
-        <title>Update</title>
-        <meta name="description" content="Update">
-        <meta name="keywords" content="Update">
-    </head>
-    <body>
-        <h1> Job Listing Updates </h1>
-        
-        <ul>
-            {% for items in data %}
-                <h1> {{items[0]}}: </h1>
-                {% for job in items %}
-                    {%if loop.index0 >= 1 %}
-                        <li>{{ job }}</li>
-                    {% endif %}
-                {% endfor %}
-               
-            {% endfor %}
-        </ul>
-    </body>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A daily roundup of software engineering internship openings.">
+  <title>Internship openings</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17211f;
+      --muted: #687772;
+      --line: #dce5df;
+      --paper: #f5f7f2;
+      --card: #ffffff;
+      --green: #167a55;
+      --green-pale: #e4f3e9;
+      --orange: #ef9b54;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: inherit; }
+    .topline { height: 7px; background: linear-gradient(90deg, var(--green) 0 72%, var(--orange) 72%); }
+    .wrap { width: min(100% - 40px, 920px); margin: 0 auto; }
+    header { padding: 54px 0 32px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px;
+      color: var(--green); font-size: 12px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); }
+    h1 { margin: 12px 0 8px; font-size: clamp(34px, 6vw, 54px); line-height: 1.03; letter-spacing: -.045em; }
+    .intro { max-width: 570px; margin: 0; color: var(--muted); font-size: 17px; }
+    .summary {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 15px 18px; border: 1px solid var(--line); border-radius: 14px; background: #eef3ed;
+      color: var(--muted); font-size: 13px;
+    }
+    .summary strong { color: var(--ink); }
+    main { padding: 8px 0 56px; }
+    .companies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+    .company {
+      overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--card);
+      box-shadow: 0 4px 16px rgb(25 49 39 / 4%);
+    }
+    .company-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--line); }
+    h2 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
+    .count { flex: none; padding: 4px 9px; border-radius: 999px; background: var(--green-pale); color: var(--green); font-size: 12px; font-weight: 700; }
+    ul { display: grid; gap: 0; margin: 0; padding: 0 20px; list-style: none; }
+    li + li { border-top: 1px solid #edf1ed; }
+    li a { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 15px 0; text-decoration: none; font-weight: 560; }
+    li a:hover { color: var(--green); }
+    .arrow { flex: none; color: var(--green); font-size: 18px; line-height: 1.2; }
+    .empty { margin-top: 20px; padding: 28px; border: 1px dashed #b9c8bf; border-radius: 16px; color: var(--muted); text-align: center; }
+    footer { padding: 0 0 30px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 28px, 920px); }
+      header { padding: 38px 0 25px; }
+      .companies { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topline" aria-hidden="true"></div>
+  <header class="wrap">
+    <div class="eyebrow"><span class="dot" aria-hidden="true"></span> Daily job scan</div>
+    <h1>Internship openings</h1>
+    <p class="intro">Software engineering internships found across the companies tracked here. Select a role to view its original listing.</p>
+  </header>
+
+  <main class="wrap">
+    <div class="summary">
+      <span><strong>{{ companies|length }}</strong> {{ "company" if companies|length == 1 else "companies" }} with matching openings</span>
+      <span>Updated {{ updated_at.strftime("%b %d, %Y at %H:%M UTC") }}</span>
+    </div>
+
+    {% if companies %}
+      <div class="companies">
+        {% for company in companies %}
+          <section class="company" aria-labelledby="company-{{ loop.index }}">
+            <div class="company-head">
+              <h2 id="company-{{ loop.index }}">{{ company.name }}</h2>
+              <span class="count">{{ company.jobs|length }} {{ "role" if company.jobs|length == 1 else "roles" }}</span>
+            </div>
+            <ul>
+              {% for job in company.jobs %}
+                <li><a href="{{ job.url }}" target="_blank" rel="noopener noreferrer"><span>{{ job.title }}</span><span class="arrow" aria-hidden="true">↗</span></a></li>
+              {% endfor %}
+            </ul>
+          </section>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty">No matching listings are available in this update.</div>
+    {% endif %}
+  </main>
+
+  <footer class="wrap">Listings are collected from company career pages. Check the linked listing for current details.</footer>
+</body>
 </html>
